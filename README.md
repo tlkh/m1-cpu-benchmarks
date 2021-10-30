@@ -137,12 +137,14 @@ From here, we can run our NumPy and SpaCy benchmarks that leverage NumPy.
 
 ### SpaCy
 
-Note that as of 3.1.4, SpaCy can optionally leverage Accelerate directly! To use it (note: this will replace the SpaCy install, so you might want to set up another environemnt):
+Note that as of 3.1.4, SpaCy can optionally leverage Accelerate directly! To use it, you need to start from a fresh environment that does not already have SpaCy!
 
 ```
-pip uninstall spacy -y 
-pip install 'spacy[apple]'
+rm -rf /Users/$USER/Library/Caches/pip
+pip install --no-cache-dir 'spacy[apple]'
 ```
+
+Note: removing your pip cache (not enough installing with `--no-cache-dir`) is important for this to work fully (somehow) else you'll only get half the performance boost. 
 
 ### Jax
 

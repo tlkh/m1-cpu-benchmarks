@@ -1,16 +1,18 @@
-# m1-cpu-benchmarks
+# M1 CPU Benchmarks
 
-M1 CPU Benchmarks
-
-## Goals
-
-To test CPU-based performance on M1. 
+To test CPU-based performance on M1 on various compute tasks.
 
 ## Benchmarks
 
+Preface: benchmarking is hard, there are many possible configs/compile options etc for things like NumPy, as well as many different tasks. Constructive feedback is wellcome! 
+
 ### Numpy
 
-Benchmark a variety of different functions in NumPy. M1 is almost 2x faster in MatMul, almost certainly because the Accelerate library is dispatching the MatMul to the "secret" AMX coprocessor.
+Benchmark a variety of different functions in NumPy.
+
+[Accelerate](https://developer.apple.com/documentation/accelerate) is Apple's high-performance computation library. NumPy can be compiled with support for Accelerate. M1 is almost 2x faster in MatMul, almost certainly because the Accelerate library is dispatching the MatMul to the "secret" AMX coprocessor.
+
+Comparison between NumPy (with Accelerate) vs NumPy (from conda) vs 5600X. Numpy reported configs for each can be found in the [Setup & Configs](https://github.com/tlkh/m1-cpu-benchmarks#setup--configs) section below.
 
 | Task       | Accelerate | Conda | 5600X |
 | ---------- | ---------- | ----- | ----- |
@@ -151,6 +153,8 @@ pip install 'spacy[apple]'
 Still very early days for Jax on ARM/M1, issue being tracked [here](https://github.com/google/jax/issues/5501).
 
 ### Reference 5600X
+
+I used the NumPy from NGC PyTorch container, which should be reasonably optimized.
 
 NumPy config:
 

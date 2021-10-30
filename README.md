@@ -52,7 +52,7 @@ Benchmark script: `spacy_benchmarks.py`.
 
 ### Jax
 
-Simple benchmark, set up to be similar to the NumPy one to measure TFLOPS. Performs similar to conda install of NumPy, hence probably is not aware of the AMX. Functionally, things like JIT, VMAP work, but in our simple test don't give any performance gains. 
+Simple benchmark, set up to be similar to the NumPy one to measure TFLOPS. Performs similar to conda install of NumPy, hence probably is not aware of the AMX. Functionally, things like JIT, VMAP work, but in our simple test don't give any performance gains. For refence, M1 can score almost 1.9 TFLOPS using the Accelerate library via NumPy, and should be able to exceed 2 TFLOPS if calling Accelerate directly without any Python overhead. 
 
 | Task           | M1    | 5600X |
 | -------------- | ----- | ----- |

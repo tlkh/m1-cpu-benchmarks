@@ -10,6 +10,8 @@ To test CPU-based performance on M1.
 
 ### Numpy
 
+Benchmark a variety of different functions in NumPy. M1 is almost 2x faster in MatMul, almost certainly because the Accelerate library is dispatching the MatMul to the "secret" AMX coprocessor.
+
 | Task       | Accelerate | Conda | 5600X |
 | ---------- | ---------- | ----- | ----- |
 | datagen    | 0.348 | 0.385 | 0.472 |
@@ -21,9 +23,19 @@ To test CPU-based performance on M1.
 | cholesky   | 0.069 | 0.097 | 0.111 |
 | eigendecomp| 4.911 | 7.635 | 3.214 |
 
-M1 is almost 2x faster in MatMul! 
+Benchmark script: `numpy_benchmarks.py`.
+
+Using a MatMul as a proxy to measure the CPU's TFLOPS:
+
+| FP64 | FP32 | FP16 | 
+| ---- | ---- | ---- |
+| ![](fp64_tflops.png) | ![](fp32_tflops.png) | ![](fp16_tflops.png)
+
+Benchmark script: `numpy_tflops.py`.
 
 ### SpaCy
+
+Overall, the 5600X is still faster when running "real" CPU-based models. On M1, Accelerate (via NumPy) doesn't seem to affect anything but the Transformer model, but that seems to use PyTorch. So maybe Accelerate is linked to PyTorch as well? Installing SpaCy's AppleOps which allows SpaCy to directly call Accelerate provides a dramatic performance improvement.
 
 | config | en_core_web_sm | en_core_web_md | en_core_web_lg | en_core_web_trf |
 | ------ | -------------- | -------------- | -------------- | --------------- |
@@ -34,7 +46,19 @@ M1 is almost 2x faster in MatMul!
 | 5600X                 | 9580 | 8748 | 8773 |  487 |
 | 5600X + MKL           | 9550 | 8765 | 8800 | 1151 |
 
-Overall, the 5600X is still faster. 
+Benchmark script: `spacy_benchmarks.py`.
+
+### Jax
+
+Simple benchmark, set up to be similar to the NumPy one to measure TFLOPS. Performs similar to conda install of NumPy, hence probably is not aware of the AMX. Functionally, things like JIT, VMAP work, but in our simple test don't give any performance gains. 
+
+| Task           | M1    | 5600X |
+| -------------- | ----- | ----- |
+| MatMul         | 0.559 | 0.594 |
+| JIT MatMul     | 0.558 | 0.593 |
+| JIT+VMAP MatMul| 0.546 | 0.419 |
+
+Benchmark script: `jax_benchmarks.py`.
 
 ## Setup & Configs
 
@@ -117,6 +141,14 @@ Note that as of 3.1.4, SpaCy can optionally leverage Accelerate directly! To use
 pip uninstall spacy -y 
 pip install 'spacy[apple]'
 ```
+
+### Jax
+
+1. `conda install pip numpy scipy`
+2. `pip install -U https://storage.googleapis.com/jax-releases/mac/jaxlib-0.1.74-cp39-none-macosx_11_0_arm64.whl`
+3. `pip install jax`
+
+Still very early days for Jax on ARM/M1, issue being tracked [here](https://github.com/google/jax/issues/5501).
 
 ### Reference 5600X
 

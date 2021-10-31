@@ -43,6 +43,8 @@ Benchmark script: `numpy_tflops.py`.
 
 Overall, the M1 is faster than the desktop 5600X! On M1, Accelerate (via NumPy) doesn't seem to affect anything. PyTorch seems to be affected by NumPy performance. Installing SpaCy's AppleOps which allows SpaCy to directly call Accelerate provides a dramatic performance improvement.
 
+Tokens/second reported, higher is better.
+
 | config | en_core_web_sm | en_core_web_md | en_core_web_lg | en_core_web_trf |
 | ------ | -------------- | -------------- | -------------- | --------------- |
 | M1 (conda: [env 1](#env-1-generic))       | 3143 | 2899 | 2853 |  309 |
@@ -61,6 +63,8 @@ Benchmark script: `spacy_benchmarks.py`.
 ### Jax
 
 Simple benchmark, set up to be similar to the NumPy one to measure TFLOPS. Performs similar to conda install of NumPy, hence probably is not aware of the AMX. Functionally, things like JIT, VMAP work, but in our simple test don't give any performance gains. For refence, M1 can score almost 1.9 TFLOPS using the Accelerate library via NumPy, and should be able to exceed 2 TFLOPS if calling Accelerate directly without any Python overhead. Hence, for any MatMul-heavy work, Jax is likely going to be slower than NumPy.
+
+TFLOPS reported, higher is better.
 
 | Task           | M1    | 5600X |
 | -------------- | ----- | ----- |

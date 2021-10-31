@@ -14,16 +14,18 @@ Benchmark a variety of different functions in NumPy.
 
 Comparison between NumPy (with Accelerate) vs NumPy (from conda) vs 5600X. Numpy reported configs for each can be found in the [Setup & Configs](https://github.com/tlkh/m1-cpu-benchmarks#setup--configs) section below.
 
-| Task       | Accelerate | Conda | 5600X |
-| ---------- | ---------- | ----- | ----- |
-| datagen    | 0.348 | 0.385 | 0.472 |
-| special    | 0.447 | 0.459 | 0.599 |
-| stats      | 1.017 | 1.253 | 0.961 |
-| matmul     | 0.301 | 0.602 | 0.509 |
-| vecmul     | 0.011 | 0.015 | 0.009 |
-| svd        | 0.469 | 1.591 | 0.372 |
-| cholesky   | 0.069 | 0.097 | 0.111 |
-| eigendecomp| 4.911 | 7.635 | 3.214 |
+Timings for task reported, lower is better.
+
+| Task       | M1+Accelerate | Conda | 5600X | 5600X+MKL |
+| ---------- | ---------- | ----- | ----- | -- |
+| datagen    | 0.348 | 0.385 | 0.472 | 0.462 |
+| special    | 0.447 | 0.459 | 0.599 | 1.149 |
+| stats      | 1.017 | 1.253 | 0.961 | 1.018 |
+| matmul     | 0.301 | 0.602 | 0.509 | 0.616 |
+| vecmul     | 0.011 | 0.015 | 0.009 | 0.007 |
+| svd        | 0.469 | 1.591 | 0.372 | 0.287 |
+| cholesky   | 0.069 | 0.097 | 0.111 | 0.111 |
+| eigendecomp| 4.911 | 7.635 | 3.214 | 2.749 |
 
 Benchmark script: `numpy_benchmarks.py`.
 
@@ -48,7 +50,7 @@ Overall, the 5600X is still faster when running "real" CPU-based models. On M1, 
 | M1 (appleops: [env 3](#env-3-spacyappleops))| 17295 | 16772 | 16670 | 1121 |
 | M1 (env 2+AppleOps)                | 17966 | 16796 | 16946 | 1193 |
 | 5600X                 | 9580 | 8748 | 8773 |  487 |
-| 5600X + MKL           | 9550 | 8765 | 8800 | 1151 |
+| 5600X + MKL           | 13895 | 12843 | 12916 | 1107 |
 
 For SpaCy, you want to be using SpaCy+AppleOps, the rest doesn't really matter.
 
@@ -160,7 +162,7 @@ Still very early days for Jax on ARM/M1, issue being tracked [here](https://gith
 
 ### Reference 5600X
 
-I used the NumPy from NGC PyTorch container, which should be reasonably optimized.
+Base config: NumPy from NGC PyTorch container, which should be reasonably optimized.
 
 NumPy config:
 
@@ -193,4 +195,45 @@ Supported SIMD extensions in this NumPy install:
     not found = AVX512F,AVX512CD,AVX512_KNL,AVX512_KNM,AVX512_SKX,AVX512_CLX,AVX512_CNL,AVX512_ICL
 ```
 
-For NumPy, no diff observed with `MKL_DEBUG_CPU_TYPE=5` flag.
+For the above NumPy, no diff observed with `MKL_DEBUG_CPU_TYPE=5` flag.
+
+MKL config: Install NumPy + MKL from Conda in a clean conda env.
+
+```
+blas_mkl_info:
+    libraries = ['mkl_rt', 'pthread']
+    library_dirs = ['/opt/conda/lib']
+    define_macros = [('SCIPY_MKL_H', None), ('HAVE_CBLAS', None)]
+    include_dirs = ['/opt/conda/include']
+blas_opt_info:
+    libraries = ['mkl_rt', 'pthread']
+    library_dirs = ['/opt/conda/lib']
+    define_macros = [('SCIPY_MKL_H', None), ('HAVE_CBLAS', None)]
+    include_dirs = ['/opt/conda/include']
+lapack_mkl_info:
+    libraries = ['mkl_rt', 'pthread']
+    library_dirs = ['/opt/conda/lib']
+    define_macros = [('SCIPY_MKL_H', None), ('HAVE_CBLAS', None)]
+    include_dirs = ['/opt/conda/include']
+lapack_opt_info:
+    libraries = ['mkl_rt', 'pthread']
+    library_dirs = ['/opt/conda/lib']
+    define_macros = [('SCIPY_MKL_H', None), ('HAVE_CBLAS', None)]
+    include_dirs = ['/opt/conda/include']
+Supported SIMD extensions in this NumPy install:
+    baseline = SSE,SSE2,SSE3
+    found = SSSE3,SSE41,POPCNT,SSE42,AVX,F16C,FMA3,AVX2
+    not found = AVX512F,AVX512CD,AVX512_KNL,AVX512_KNM,AVX512_SKX,AVX512_CNL
+```
+
+For the NumPy+MKL config, no diff observed with `MKL_DEBUG_CPU_TYPE=5` flag either, for PyTorch and NumPy perf.
+
+Torch config:
+
+```
+>>> import torch
+>>> torch.backends.mkldnn.is_available()
+True
+>>> torch.backends.mkl.is_available()
+True
+```

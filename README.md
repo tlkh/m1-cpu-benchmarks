@@ -76,6 +76,28 @@ TFLOPS reported, higher is better.
 
 Benchmark script: `jax_benchmarks.py`.
 
+### Pandas
+
+Timings reported in seconds, lower is better.
+
+| Task | M1 | 5600X |
+| ---- | -- | ----- |
+| datagen | 3.2 | 3.4 |
+| inner_merge | 17.6 | 27.4 |
+| outer_merge | 27.6 | 41.9 |
+
+outer_merge is single core-only, the rest were run with the optimal number of cores tested:
+
+* 5600X: 2 cores was the fastest (tested 1, 2, 4, 6, 12)
+* M1: 10 cores was the fasted (tested 1, 2, 8, 10)
+
+Performance mostly agrees with peak bandwidth measured by STREAM benchmark! I wanted to test something that a little more memory intensive to test out the M1's memory bandwidth from the CPU. Looks like this would be it.
+
+* Peak bandwidth from a M1 P-core is about 97GB/s (avg over 1s is about 79 GB/s)
+* Peak bandwidth from a 5600X core is about 42GB/s.
+* Thus outer_merge is about 50% faster on M1, which has about 2x the memory bandwidth.
+* With overall higher memory bandwidth and being able to leverage more cores, inner_merge is much faster as well.
+
 ## Setup & Configs
 
 ### Env 1: Generic

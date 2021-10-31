@@ -35,7 +35,7 @@ Using a MatMul as a proxy to measure the CPU's TFLOPS:
 
 | FP64 | FP32 | FP16 | 
 | ---- | ---- | ---- |
-| ![](fp64_tflops.png) | ![](fp32_tflops.png) | ![](fp16_tflops.png)
+| ![](images/tflops_fp64.png) | ![](images/tflops_fp32.png) | ![](images/tflops_fp16.png)
 
 For NumPy, you definitely want to be using Accelerate!
 
@@ -97,6 +97,10 @@ Performance mostly agrees with peak bandwidth measured by STREAM benchmark! I wa
 * Peak bandwidth from a 5600X core is about 42GB/s.
 * Thus outer_merge is about 50% faster on M1, which has about 2x the memory bandwidth.
 * With overall higher memory bandwidth and being able to leverage more cores, inner_merge is much faster as well.
+
+| Stream Benchmark |
+| ---------------- |
+| ![](images/stream.png) |
 
 ## Setup & Configs
 

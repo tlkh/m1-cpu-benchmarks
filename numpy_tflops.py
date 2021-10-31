@@ -47,7 +47,7 @@ def get_tflops(size, iterations, dtype):
     for i in range(iterations+1):
         np.matmul(A, B)
     et = time()
-    duration = et-st - overhead
+    duration = et-st
     if duration < 3:
         extend_ratio = 3/duration
         new_iterations = int(extend_ratio*iterations)
@@ -59,6 +59,7 @@ def get_tflops(size, iterations, dtype):
         duration = et-st - overhead
         fps = new_iterations/duration
     else:
+        duration -= overhead
         fps = iterations/duration
     matmul_flops = 2 * (size**3)
     TFLOPS = fps*matmul_flops/(1e12)

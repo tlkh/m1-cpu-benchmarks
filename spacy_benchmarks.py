@@ -7,7 +7,7 @@ The Apple M1 is an ARM-based system on a chip (SoC). It was designed by Apple In
 In addition to Apple's own macOS and iPadOS, initial support for the M1 SoC in the Linux kernel was released on June 27, 2021, with version 5.13.[5]
 """
 
-iterations = 300
+iterations = 100
 
 nlp = spacy.load("en_core_web_sm")
 token_count = len(nlp(line))

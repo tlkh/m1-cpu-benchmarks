@@ -6,6 +6,8 @@ To test CPU-based performance on M1 on various compute tasks.
 
 Preface: benchmarking is hard, there are many possible configs/compile options etc for things like NumPy, as well as many different tasks. Constructive feedback is wellcome! 
 
+All benchmark here is performed with M1 Max (10 core) on 16-inch MBP 2021 with charger plugged in and High Power mode enabled.
+
 ### Numpy
 
 Benchmark a variety of different functions in NumPy.

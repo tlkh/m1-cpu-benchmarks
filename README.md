@@ -44,7 +44,7 @@ Overall, the 5600X is still faster when running "real" CPU-based models. On M1, 
 | config | en_core_web_sm | en_core_web_md | en_core_web_lg | en_core_web_trf |
 | ------ | -------------- | -------------- | -------------- | --------------- |
 | M1 ([env 1](#env-1-generic))       | 3143 | 2899 | 2853 |  309 |
-| M1 ([env 3](#env-3-spacy+appleops))| 17295 | 16772 | 16670 | 1121 |
+| M1 ([env 3](#env-3-spacyappleops))| 17295 | 16772 | 16670 | 1121 |
 | M1 ([env 2](#env-2-accelerate))    | 3191 | 2899 | 2900 | 1064 |
 | M1 (env 2+AppleOps)                | 17966 | 16796 | 16946 | 1193 |
 | 5600X                 | 9580 | 8748 | 8773 |  487 |

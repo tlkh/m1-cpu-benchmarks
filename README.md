@@ -102,6 +102,14 @@ Performance mostly agrees with peak bandwidth measured by STREAM benchmark! I wa
 | ---------------- |
 | ![](images/stream.png) |
 
+## PyPerformance
+
+How about Python performance in general?
+
+M1 Max is about 70% faster in executing Python code compared to 5600X, according to the [PyPerformance](https://github.com/python/pyperformance) benchmark. In many subtasks, M1 finishes in almost half the time. One notable area where M1 is slower is serving HTTP requests with the Tornado Web Server, where 5600X is about twice as fast.
+
+![](images/pyperformance.png)
+
 ## Setup & Configs
 
 ### Env 1: Generic

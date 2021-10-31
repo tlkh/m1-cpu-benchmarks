@@ -41,7 +41,7 @@ Benchmark script: `numpy_tflops.py`.
 
 ### SpaCy
 
-Overall, the 5600X is still faster when running "real" CPU-based models. On M1, Accelerate (via NumPy) doesn't seem to affect anything. PyTorch seems to be affected by NumPy performance. Installing SpaCy's AppleOps which allows SpaCy to directly call Accelerate provides a dramatic performance improvement.
+Overall, the M1 is faster than the desktop 5600X! On M1, Accelerate (via NumPy) doesn't seem to affect anything. PyTorch seems to be affected by NumPy performance. Installing SpaCy's AppleOps which allows SpaCy to directly call Accelerate provides a dramatic performance improvement.
 
 | config | en_core_web_sm | en_core_web_md | en_core_web_lg | en_core_web_trf |
 | ------ | -------------- | -------------- | -------------- | --------------- |

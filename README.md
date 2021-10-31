@@ -33,20 +33,26 @@ Using a MatMul as a proxy to measure the CPU's TFLOPS:
 | ---- | ---- | ---- |
 | ![](fp64_tflops.png) | ![](fp32_tflops.png) | ![](fp16_tflops.png)
 
+For NumPy, you definitely want to be using Accelerate!
+
 Benchmark script: `numpy_tflops.py`.
 
 ### SpaCy
 
-Overall, the 5600X is still faster when running "real" CPU-based models. On M1, Accelerate (via NumPy) doesn't seem to affect anything but the Transformer model, but that seems to use PyTorch. So maybe Accelerate is linked to PyTorch as well? Installing SpaCy's AppleOps which allows SpaCy to directly call Accelerate provides a dramatic performance improvement.
+Overall, the 5600X is still faster when running "real" CPU-based models. On M1, Accelerate (via NumPy) doesn't seem to affect anything. PyTorch seems to be affected by NumPy performance. Installing SpaCy's AppleOps which allows SpaCy to directly call Accelerate provides a dramatic performance improvement.
 
 | config | en_core_web_sm | en_core_web_md | en_core_web_lg | en_core_web_trf |
 | ------ | -------------- | -------------- | -------------- | --------------- |
-| M1 conda              | 3143 | 2899 | 2853 |  309 |
-| M1 conda+AppleOps     | 7826 | 7116 | 6208 |  313 |
-| M1 Accelerate         | 3191 | 2899 | 2900 | 1064 |
-| M1 Accelerate+AppleOps| 7907 | 7029 | 6384 | 1125 |
+| M1 ([env 1](#env-1-generic))       | 3143 | 2899 | 2853 |  309 |
+| M1 ([env 3](#env-3-spacy+appleops))| 17295 | 16772 | 16670 | 1121 |
+| M1 ([env 2](#env-2-accelerate))    | 3191 | 2899 | 2900 | 1064 |
+| M1 (env 2+AppleOps)                | 17966 | 16796 | 16946 | 1193 |
 | 5600X                 | 9580 | 8748 | 8773 |  487 |
 | 5600X + MKL           | 9550 | 8765 | 8800 | 1151 |
+
+For SpaCy, you want to be using SpaCy+AppleOps, the rest doesn't really matter.
+
+Note: for the SpaCy benchmarks, run-to-run variances can be fairly big (due to CPU clocking or background OS tasks, I am not sure), so +/- less than 10% can be considered to be roughly the same performance.
 
 Benchmark script: `spacy_benchmarks.py`.
 
@@ -104,8 +110,8 @@ Supported SIMD extensions in this NumPy install:
 
 ### Env 2: Accelerate 
 
-1. Install all relevant packages and dependencies for building NumPy and SpaCy: `conda install numpy spacy transformers pytest hypothesis cython`. We're going to build NumPy and SpaCy from source, but when we install from conda we automatically get all the dependencies to make building from source easier.
-2. `pip uninstall numpy -y`
+1. `conda install pip`
+2. Install all relevant packages and dependencies for building NumPy and SpaCy: `pip install pytest hypothesis cython`. We're going to build NumPy and SpaCy from source. 
 3. `git clone https://github.com/numpy/numpy`
 4. `git checkout maintenance/1.21.x`
 5. `python setup.py build_ext --inplace -j 10` With 10 threads for compile (feel free to adjust this), my M1 Max finishes in less than 30 seconds. 
@@ -135,16 +141,14 @@ Supported SIMD extensions in this NumPy install:
 
 From here, we can run our NumPy and SpaCy benchmarks that leverage NumPy.
 
-### SpaCy
+### Env 3: SpaCy+AppleOps
 
-Note that as of 3.1.4, SpaCy can optionally leverage Accelerate directly! To use it, you need to start from a fresh environment that does not already have SpaCy!
+Note that as of 3.1.4, SpaCy can optionally leverage Accelerate directly! To use it, you need to start from a fresh environment, there seem to be other factors that affect the performance, **you need to start clean otherwise you only get about half the performance boost for some reason**.
 
 ```
 rm -rf /Users/$USER/Library/Caches/pip
 pip install --no-cache-dir 'spacy[apple]'
 ```
-
-Note: removing your pip cache (not enough installing with `--no-cache-dir`) is important for this to work fully (somehow) else you'll only get half the performance boost. 
 
 ### Jax
 
